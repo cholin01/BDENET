@@ -1,0 +1,10 @@
+PFOS,C(C(C(C(C(F)(F)S(=O)(=O)O)(F)F)(F)F)(F)F)(C(C(C(F)(F)F)(F)F)(F)F)(F)F
+Captopril,C[C@H](CS)C(=O)N1CCC[C@H]1C(=O)O
+Enalapril,CCOC(=O)[C@H](CCC1=CC=CC=C1)N[C@@H](C)C(=O)N2CCC[C@H]2C(=O)O
+Lisinopril,C1C[C@H](N(C1)C(=O)[C@H](CCCCN)N[C@@H](CCC2=CC=CC=C2)C(=O)O)C(=O)O
+Cromoglicic_acid,C1=CC2=C(C(=C1)OCC(COC3=CC=CC4=C3C(=O)C=C(O4)C(=O)O)O)C(=O)C=C(O2)C(=O)O
+Alendronic_acid,C(CC(O)(P(=O)(O)O)P(=O)(O)O)CN
+Cmpd36,O=C(N[C@H]1CN(S(=O)(=O)c2ccccc2)C[C@@H]1C(=O)N[C@H]1CCCNC1)c1cc(-c2ccccc2)on1
+Cmpd89,CC1(C)Oc2cc(NS(C)(=O)=O)ccc2N(c2ccc(F)cc2)C1=O
+Cmpd93,NC(=O)CC1COc2cc(F)ccc2N1C(=O)c1ccc2c(c1)NC(=O)CO2
+Cmpd106,CNC(=O)CC1COc2ccccc2N1C(=O)c1ccc2c(c1)NC(=O)CO2

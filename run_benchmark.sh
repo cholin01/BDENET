@@ -1,0 +1,34 @@
+python run_wetlab_benchmark.py \
+  --pairs_csv data/molecule_optimization_wetlab_pairs_20rows.csv \
+  --output_dir outputs/wetlab_benchmark \
+  --fragstore_path frag_gt/data/fragment_libraries/chembl_33_chemreps_std_fragstore_brics_filter2.pkl \
+  --bde_checkpoint BDENET/checkpoints/BDE_ckpt_new/bde_checkpoint \
+  --device cuda:0 \
+  --modes global,local \
+  --population_size 200 \
+  --n_mutations 200 \
+  --generations 30 \
+  --number_molecules 100 \
+  --top_k 50 \
+  --n_jobs 1 \
+  --seed 42 \
+  --selection_strategy pareto \
+  --use_two_stage_bde \
+  --bde_top_k_per_batch 40 \
+  --bde_top_fraction_per_batch 0.25 \
+  --bde_min_cheap_score 0.25 \
+  --max_bde_mw 650 \
+  --max_bde_heavy_atoms 70 \
+  --max_bde_bonds 75 \
+  --min_similarity 0.55 \
+  --structural_filter_profile druglike_local \
+  --sa_pass_threshold 6.0 \
+  --logp_min 0.0 \
+  --logp_max 4.0 \
+  --mw_min 150.0 \
+  --mw_max 550.0 \
+  --tpsa_min 0.0 \
+  --tpsa_max 140.0 \
+  --sa_min 1.0 \
+  --sa_max 6.0 \
+  --admet_backend none
