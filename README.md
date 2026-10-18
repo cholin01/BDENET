@@ -76,7 +76,7 @@ The repository contains three main parts:
 ├── data/
 │   ├── fetch_guacamol.sh
 │   ├── guacamol_v1_all.smiles
-│   └── molecule_optimization_wetlab_pairs_20rows.csv
+│   └── molecule_optimization_wetlab_pairs_15_unique.csv
 │
 ├── tests/
 │   └── test_bdgen_properties.py
@@ -196,10 +196,10 @@ bash run_benchmark.sh
 The benchmark uses:
 
 ```text
-data/molecule_optimization_wetlab_pairs_20rows.csv
+data/molecule_optimization_wetlab_pairs_15_unique.csv
 ```
 
-as the default molecular optimization pair file.
+as the default molecular optimization pair file. It contains 15 experimental pairs with unique RDKit-canonicalized `initial_smiles`; original `pair_id` values are retained for traceability.
 
 Generated results are saved under:
 

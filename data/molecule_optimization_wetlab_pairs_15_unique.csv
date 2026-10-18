@@ -8,7 +8,6 @@ MO-006,CN(Cc1ccc(cc1)c1nc2c3n1CCNC(=O)c3ccc2)C,NC(=O)c1cccc2c1nn(c2)c1ccc(cc1)[C
 MO-007,CC(C)OC1=C(C=CC(=C1)OC)C2=NC(C(N2C(=O)N3CCNC(=O)C3)C4=CC=C(C=C4)Cl)C5=CC=C(C=C5)Cl,CCOc1cc(ccc1C1=N[C@@]([C@@](N1C(=O)N1CCN(CC1)CCCS(=O)(=O)C)(C)c1ccc(cc1)Cl)(C)c1ccc(cc1)Cl)C(C)(C)C,MDM2-p53 protein-protein interaction
 MO-008,CCCS(=O)(=O)NC1=CC=C(F)C(C(=O)C2=CNC3=C2C=C(Cl)C=N3)=C1F,CCCS(=O)(=O)Nc1ccc(F)c(c1F)C(=O)c2c[nH]c3c2cc(cn3)c4ccc(Cl)cc4,BRAF V600E kinase
 MO-009,C=CC(=O)N1CCN(CC1)c1ncnc2c1cc(Cl)c(c2F)c1c(O)cccc1F,CC(C)c1nccc(C)c1N2C(=O)N=C(N3CCN(C[C@@H]3C)C(=O)C=C)c4cc(F)c(nc24)c5c(O)cccc5F,KRAS G12C
-MO-010,C=CC(=O)N1CCN(CC1)c1ncnc2c1cc(Cl)c(c2F)c1c(O)cccc1F,CN1CCC[C@H]1COC2=NC3=C(CCN(C3)C4=CC=CC5=C4C(=CC=C5)Cl)C(=N2)N6CCN([C@H](C6)CC#N)C(=O)C(=C)F,KRAS G12C
 MO-011,C=CC(=O)N1CCC[C@H](C1)N2C3=C(C(=N2)C4=CC=C(C=C4)OC5=CC=CC=C5)C(=NC=N3)N,CC#CC(=O)N1CCC[C@H]1C2=NC(=C3N2C=CN=C3N)C4=CC=C(C=C4)C(=O)NC5=CC=CC=N5,Bruton tyrosine kinase (BTK)
 MO-012,Cc1nnc(o1)C(=O)NC(C)(C)C\3=N\C(C(=O)NCc2ccc(F)cc2)=C(\O)C(=O)N/3C,C[C@@H]1CCO[C@@H]2N1C(=O)c3c(c(=O)c(cn3C2)C(=O)NCc4ccc(cc4F)F)O,HIV-1 integrase strand transfer
 MO-013,C[C@@H]1CCO[C@@H]2N1C(=O)c3c(c(=O)c(cn3C2)C(=O)NCc4ccc(cc4F)F)O,c1c(cc(c(c1F)CNC(=O)c2cn3c(c(c2=O)O)C(=O)N4[C@H]5CC[C@H](C5)O[C@@H]4C3)F)F,HIV-1 integrase strand transfer

@@ -1,5 +1,5 @@
 python run_wetlab_benchmark.py \
-  --pairs_csv data/molecule_optimization_wetlab_pairs_20rows.csv \
+  --pairs_csv data/molecule_optimization_wetlab_pairs_15_unique.csv \
   --output_dir outputs/wetlab_benchmark \
   --fragstore_path frag_gt/data/fragment_libraries/chembl_33_chemreps_std_fragstore_brics_filter2.pkl \
   --bde_checkpoint BDENET/checkpoints/BDE_ckpt_new/bde_checkpoint \
