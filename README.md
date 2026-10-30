@@ -80,7 +80,7 @@ The repository contains three main parts:
 │   ├── Natural_products_testset.csv
 │   ├── molecule_optimization_wetlab_pairs_15_unique.csv
 │   ├── overview.PNG
-│   └── BDGen_DFT_results.csv，
+│   └── BDGen_DFT_results.csv
 │
 ├── tests/
 │   └── test_bdgen_properties.py
