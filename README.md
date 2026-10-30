@@ -76,9 +76,10 @@ The repository contains three main parts:
 │   └── G2Retro/
 │
 ├── data/
-│   ├── fetch_guacamol.sh
-│   ├── guacamol_v1_all.smiles
-│   └── molecule_optimization_wetlab_pairs_15_unique.csv
+│   ├── Extra_testset.csv
+│   ├── Natural_products_testset.csv
+│   ├── molecule_optimization_wetlab_pairs_15_unique.csv
+│   └── overview.PNG
 │
 ├── tests/
 │   └── test_bdgen_properties.py
@@ -144,7 +145,7 @@ BDENET predicts bond-level BDE values for molecular bonds. The predicted values 
 from rdkit import Chem
 from BDENET.bde_predictor import BDEPredictor
 
-checkpoint_path = "BDENET/checkpoints/DecNet/BDE_ckpt_new/bde_checkpoint"
+checkpoint_path = "BDENET/checkpoints/BDE_ckpt_new/bde_checkpoint"
 device = "cuda:0"
 
 predictor = BDEPredictor(
@@ -184,6 +185,24 @@ python run_bdgen.py all --output results --jobs 2
 
 See the [BDGen README](BDGen/README.md) for individual strategies, effective search settings, candidate selection, output definitions, and optional post-generation ADMET evaluation. ADMET endpoints do not participate in the six-strategy optimization workflow.
 
+## Benchmark execution and reports
+
+`run_wetlab_benchmark.py` runs the shared BDGen entry point and exports final candidates with literature-pair metadata. `run_benchmark.sh` provides the same interface as a shell command:
+
+```bash
+bash run_benchmark.sh --strategy all --jobs 2 --output outputs/wetlab_benchmark
+```
+
+Use `--profile smoke --case MO-008` for a short functional check, or `--plan-only` to inspect the commands. To export reports from a completed run without generating candidates:
+
+```bash
+python run_wetlab_benchmark.py --report-only --output outputs/wetlab_benchmark
+```
+
+Reports are written under `<output>/benchmark_reports/`: all selected candidates, their Top-K prefix, per-case strategy summaries with actual counts and shortfalls, and literature references. Reference records are matched by canonical isomeric initial SMILES; `case_id` follows the BDGen case list and `source_pair_id` preserves the reference CSV identifier. Candidate-file hashes are verified before export, and the order in `candidates.json` is retained. `--top-k` controls only the additional report, with a default of 10.
+
+`run_bde_frag_gt.py` forwards six-strategy commands to `BDGen/run_bdgen.py`. Install the dependencies described in [BDGen/README.md](BDGen/README.md) for all entry points.
+
 ---
 
 # 🛠️ BDE-Aware Tool Models
@@ -215,7 +234,11 @@ The BDE-aware G2Retro module is used for retrosynthesis-related modeling with bo
 
 # ✅ BDGen Functional Check
 
-Use the `smoke` command above to check candidate generation and Pareto selection after installing the BDGen dependencies.
+Use the `smoke` command above to check candidate generation and Pareto selection after installing the BDGen dependencies. Run the routing and benchmark-export checks with:
+
+```bash
+python -m unittest discover -s tests -v
+```
 
 ---
 
