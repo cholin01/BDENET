@@ -148,7 +148,7 @@ print(bde_values)
 
 # 🧪 BDGen: BDE-Guided Molecular Optimization
 
-The current BDGen implementation is distributed in [`BDGen/`](BDGen/), with a single entry point, `BDGen/run_bdgen.py`, for six optimization strategies:
+BDGen is distributed in [`BDGen/`](BDGen/), with a single entry point, `BDGen/run_bdgen.py`, for six optimization strategies:
 
 * `property-only`, `bde-only`, and `joint` compare optimization objectives.
 * `random`, `static`, and `dynamic` compare editing-region selection under the same joint BDE and property objective.
@@ -169,8 +169,6 @@ python run_bdgen.py all --output results --jobs 2
 ```
 
 See the [BDGen README](BDGen/README.md) for individual strategies, effective search settings, candidate selection, output definitions, and optional post-generation ADMET evaluation. ADMET endpoints do not participate in the six-strategy optimization workflow.
-
-BDGen uses its bundled implementation in `BDGen/core/`; the standalone root-level `frag_gt/` package is separate and is not used by the six-strategy entry point.
 
 ---
 
