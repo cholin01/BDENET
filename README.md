@@ -8,7 +8,7 @@ The repository provides a core BDE prediction model, a BDE-guided molecular opti
 
 <p align="center">
   <img 
-    src="data/overview.png" 
+    src="data/overview.PNG" 
     alt="BDENET overview" 
     width="100%" 
   />
