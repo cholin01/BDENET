@@ -1,0 +1,13 @@
+# Python and operating-system generated files
+__pycache__/
+*.py[cod]
+.DS_Store
+.pytest_cache/
+.venv/
+venv/
+
+# Generated optimization results
+/outputs/
+/BDGen/results/
+/BDGen/*_results/
+/planned_results/

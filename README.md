@@ -46,16 +46,14 @@ The repository contains three main parts:
 
 ```text
 .
-├── BDENET/
+├── BDENET/                 # Core BDE prediction model
 │   ├── bde_predictor.py
-│   ├── eval_all.py
 │   ├── checkpoints/
 │   ├── config/
 │   ├── data/
 │   ├── model/
 │   └── utils/
-│
-├── BDGen/
+├── BDGen/                  # Self-contained six-strategy optimization package
 │   ├── run_bdgen.py
 │   ├── README.md
 │   ├── requirements.txt
@@ -63,31 +61,19 @@ The repository contains three main parts:
 │   ├── config/
 │   ├── data/
 │   └── core/
-│
-├── frag_gt/
-│   ├── frag_gt.py
-│   ├── fragstore_scripts/
-│   ├── src/
-│   ├── data/
-│   └── tests/
-│
+├── frag_gt/                # Standalone FragGT implementation and tests
 ├── tools_model/
 │   ├── aweSOM/
 │   └── G2Retro/
-│
 ├── data/
-│   ├── fetch_guacamol.sh
-│   ├── guacamol_v1_all.smiles
-│   └── molecule_optimization_wetlab_pairs_15_unique.csv
-│
-├── tests/
-│   └── test_bdgen_properties.py
-│
-├── outputs/
+│   ├── Extra_testset.csv
+│   ├── Natural_products_testset.csv
+│   ├── molecule_optimization_wetlab_pairs_15_unique.csv
+│   └── overview.PNG
+├── .gitattributes
+├── .gitignore
+├── LICENSE
 ├── bdenet.yml
-├── run_bde_frag_gt.py
-├── run_wetlab_benchmark.py
-├── run_benchmark.sh
 └── README.md
 ```
 
@@ -144,7 +130,7 @@ BDENET predicts bond-level BDE values for molecular bonds. The predicted values 
 from rdkit import Chem
 from BDENET.bde_predictor import BDEPredictor
 
-checkpoint_path = "BDENET/checkpoints/DecNet/BDE_ckpt_new/bde_checkpoint"
+checkpoint_path = "BDENET/checkpoints/BDE_ckpt_new/bde_checkpoint"
 device = "cuda:0"
 
 predictor = BDEPredictor(
@@ -184,7 +170,7 @@ python run_bdgen.py all --output results --jobs 2
 
 See the [BDGen README](BDGen/README.md) for individual strategies, effective search settings, candidate selection, output definitions, and optional post-generation ADMET evaluation. ADMET endpoints do not participate in the six-strategy optimization workflow.
 
-The root-level `run_bde_frag_gt.py`, `run_wetlab_benchmark.py`, and `run_benchmark.sh` are historical scripts for the removed `bde_frag_gt/` package. Use `BDGen/run_bdgen.py` for the current implementation.
+BDGen uses its bundled implementation in `BDGen/core/`; the standalone root-level `frag_gt/` package is separate and is not used by the six-strategy entry point.
 
 ---
 
@@ -217,7 +203,11 @@ The BDE-aware G2Retro module is used for retrosynthesis-related modeling with bo
 
 # ✅ BDGen Functional Check
 
-Use the `smoke` command above to check the current BDGen installation. The root-level `tests/test_bdgen_properties.py` targets the historical `bde_frag_gt/` package and is not a test suite for the current six-strategy implementation.
+Use the `smoke` command above to check candidate generation and selection after installation. To inspect all 90 case–strategy commands without launching molecular optimization, run:
+
+```bash
+python BDGen/run_bdgen.py all --plan-only --output planned_results
+```
 
 ---
 
@@ -229,4 +219,4 @@ If you use BDENET in your research, please cite:
 
 # 📜 License
 
-This project is released for academic research use.
+See [LICENSE](LICENSE) for the Apache License 2.0 terms.
