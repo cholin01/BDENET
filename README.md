@@ -26,7 +26,7 @@ The repository contains three main parts:
 | Module              | Path           | Description                                               |
 | ------------------- | -------------- | --------------------------------------------------------- |
 | 🧠 **BDENET**       | `BDENET/`      | Core BDE prediction model                                 |
-| 🧪 **BDGen**        | `bde_frag_gt/` | BDE-guided molecular optimization module                  |
+| 🧪 **BDGen**        | [`BDGen/`](BDGen/) | Six-strategy BDE-guided molecular optimization |
 | 🛠️ **Tool Models** | `tools_model/` | BDE-aware downstream models, including aweSOM and G2Retro |
 
 ---
@@ -55,12 +55,14 @@ The repository contains three main parts:
 │   ├── model/
 │   └── utils/
 │
-├── bde_frag_gt/
-│   ├── __init__.py
-│   ├── evaluate_properties.py
-│   ├── optimizer.py
-│   ├── reaction_rules.py
-│   └── refine.py
+├── BDGen/
+│   ├── run_bdgen.py
+│   ├── README.md
+│   ├── requirements.txt
+│   ├── assets/
+│   ├── config/
+│   ├── data/
+│   └── core/
 │
 ├── frag_gt/
 │   ├── frag_gt.py
@@ -160,209 +162,29 @@ print(bde_values)
 
 # 🧪 BDGen: BDE-Guided Molecular Optimization
 
-BDGen is implemented in:
+The current BDGen implementation is distributed in [`BDGen/`](BDGen/), with a single entry point, `BDGen/run_bdgen.py`, for six optimization strategies:
 
-```text
-bde_frag_gt/
-```
+* `property-only`, `bde-only`, and `joint` compare optimization objectives.
+* `random`, `static`, and `dynamic` compare editing-region selection under the same joint BDE and property objective.
 
-The main entry script is:
+The package includes the inference checkpoint, BRICS fragment library, and 15 starting structures numbered MO-001 through MO-015. Dynamic editing samples from up to three distinct low-BDE regions of the current parent. All six strategies share the heavy-atom retention constraint of 70% and soft similarity guidance of 0.55. BDE objectives are evaluated over non-ring heavy-atom single bonds.
 
-```text
-run_bde_frag_gt.py
-```
-
-BDGen uses BDENET-predicted BDE values together with molecular property constraints to perform BDE-aware molecular optimization.
-
-The default optimization supports:
-
-* `global` optimization
-* `local` optimization
-* BDE-guided scoring
-* property preservation
-* structural filtering
-* Pareto-based candidate selection
-
----
-
-## Run the Benchmark
-
-The recommended way to run the wet-lab-style optimization benchmark is:
+Follow the separate Linux/Python 3.12 installation instructions in the [BDGen README](BDGen/README.md). From the repository root, after activating that environment:
 
 ```bash
-bash run_benchmark.sh
+cd BDGen
+python run_bdgen.py all --case MO-008 --profile smoke --output smoke_results --jobs 2
 ```
 
-The benchmark uses:
-
-```text
-data/molecule_optimization_wetlab_pairs_15_unique.csv
-```
-
-as the default molecular optimization pair file. It contains 15 experimental pairs with unique RDKit-canonicalized `initial_smiles`; original `pair_id` values are retained for traceability.
-
-Generated results are saved under:
-
-```text
-outputs/
-```
----
-
-## Single-Run Local Optimization
+To run all 15 cases under all six strategies:
 
 ```bash
-python -u run_bde_frag_gt.py \
-    --mode local \
-    --smiles_file data/guacamol_v1_all.smiles \
-    --seed_smiles 'CCOc1ccc(CCSc2ccccc2)cc1' \
-    --fragstore_path frag_gt/data/fragment_libraries/chembl_33_chemreps_std_fragstore_brics_filter2.pkl \
-    --output_dir outputs/example_local \
-    --population_size 200 \
-    --n_mutations 200 \
-    --generations 30 \
-    --number_molecules 100 \
-    --n_jobs 1 \
-    --seed 42 \
-    --maximize_bde \
-    --keep_properties \
-    --min_similarity 0.55 \
-    --structural_filter_profile druglike_local \
-    --sa_pass_threshold 6.0 \
-    --logp_min 0.0 \
-    --logp_max 4.0 \
-    --mw_min 150.0 \
-    --mw_max 550.0 \
-    --tpsa_min 0.0 \
-    --tpsa_max 140.0 \
-    --sa_min 1.0 \
-    --sa_max 6.0 \
-    --selection_strategy pareto \
-    --bde_checkpoint BDENET/checkpoints/DecNet/BDE_ckpt_new/bde_checkpoint \
-    --device cuda:0 \
-    --admet_backend none
+python run_bdgen.py all --output results --jobs 2
 ```
 
----
+See the [BDGen README](BDGen/README.md) for individual strategies, effective search settings, candidate selection, output definitions, and optional post-generation ADMET evaluation. ADMET endpoints do not participate in the six-strategy optimization workflow.
 
-## Single-Run Global Optimization
-
-```bash
-python -u run_bde_frag_gt.py \
-    --mode global \
-    --smiles_file data/guacamol_v1_all.smiles \
-    --fragstore_path frag_gt/data/fragment_libraries/chembl_33_chemreps_std_fragstore_brics_filter2.pkl \
-    --output_dir outputs/example_global \
-    --population_size 200 \
-    --n_mutations 200 \
-    --generations 30 \
-    --number_molecules 100 \
-    --n_jobs 1 \
-    --seed 42 \
-    --maximize_bde \
-    --keep_properties \
-    --min_similarity 0.55 \
-    --structural_filter_profile druglike_local \
-    --sa_pass_threshold 6.0 \
-    --logp_min 0.0 \
-    --logp_max 4.0 \
-    --mw_min 150.0 \
-    --mw_max 550.0 \
-    --tpsa_min 0.0 \
-    --tpsa_max 140.0 \
-    --sa_min 1.0 \
-    --sa_max 6.0 \
-    --selection_strategy pareto \
-    --bde_checkpoint BDENET/checkpoints/DecNet/BDE_ckpt_new/bde_checkpoint \
-    --device cuda:0 \
-    --admet_backend none
-```
-
----
-
-# ⚙️ Main BDGen Arguments
-
-| Argument               | Description                                 |
-| ---------------------- | ------------------------------------------- |
-| `--mode`               | Optimization mode: `global` or `local`      |
-| `--smiles_file`        | Input SMILES file                           |
-| `--seed_smiles`        | Seed molecule for local optimization        |
-| `--fragstore_path`     | FragGT fragment store path                  |
-| `--output_dir`         | Output directory                            |
-| `--population_size`    | Population size for optimization            |
-| `--n_mutations`        | Number of mutations                         |
-| `--generations`        | Number of generations                       |
-| `--number_molecules`   | Number of final selected molecules          |
-| `--n_jobs`             | Number of parallel jobs                     |
-| `--maximize_bde`       | Enable BDE maximization                     |
-| `--keep_properties`    | Preserve seed-related molecular properties  |
-| `--min_similarity`     | Minimum similarity constraint               |
-| `--selection_strategy` | Candidate selection strategy, e.g. `pareto` |
-| `--bde_checkpoint`     | BDENET checkpoint path                      |
-| `--device`             | Computation device                          |
-| `--admet_backend`      | ADMET backend, default can be `none`        |
-
----
-
-# 🎯 Optimization Objectives
-
-BDGen performs multi-objective candidate selection.
-
-The default Pareto selection considers:
-
-| Objective         | Description                               |
-| ----------------- | ----------------------------------------- |
-| Minimum BDE       | Avoids highly vulnerable bonds            |
-| Mean BDE          | Measures overall bond energetic stability |
-| QED               | Drug-likeness                             |
-| LogP              | Lipophilicity range                       |
-| Molecular weight  | Molecular size range                      |
-| TPSA              | Polar surface area range                  |
-| SA score          | Synthetic accessibility                   |
-| Structural filter | Drug-like structural constraints          |
-| Structural alerts | Penalizes undesirable structural alerts   |
-
-Default property ranges:
-
-```bash
---logp_min 0.0
---logp_max 4.0
---mw_min 150.0
---mw_max 550.0
---tpsa_min 0.0
---tpsa_max 140.0
---sa_min 1.0
---sa_max 6.0
-```
-
----
-
-# 📦 Outputs
-
-Each optimization run writes results to the specified output directory.
-
-Typical output files include:
-
-```text
-optimized_smiles.json
-summary.json
-summary_all_candidates.json
-pareto_fronts.json
-run_params.json
-property_evaluation.json
-seed_weakest_bond.json
-seed_bde_hot_bonds.json
-```
-
-| File                          | Description                                         |
-| ----------------------------- | --------------------------------------------------- |
-| `optimized_smiles.json`       | Final selected optimized molecules                  |
-| `summary.json`                | Summary of final selected molecules                 |
-| `summary_all_candidates.json` | Summary of all generated candidates                 |
-| `pareto_fronts.json`          | Pareto front information                            |
-| `run_params.json`             | Parameters used in the run                          |
-| `property_evaluation.json`    | Molecular property evaluation results               |
-| `seed_weakest_bond.json`      | Weakest bond information of the seed molecule       |
-| `seed_bde_hot_bonds.json`     | BDE-sensitive bond information of the seed molecule |
+The root-level `run_bde_frag_gt.py`, `run_wetlab_benchmark.py`, and `run_benchmark.sh` are historical scripts for the removed `bde_frag_gt/` package. Use `BDGen/run_bdgen.py` for the current implementation.
 
 ---
 
@@ -393,22 +215,11 @@ The BDE-aware G2Retro module is used for retrosynthesis-related modeling with bo
 ---
 
 
-# ✅ Tests
+# ✅ BDGen Functional Check
 
-Run tests from the repository root:
-
-```bash
-pytest tests/
-```
-
-A basic BDGen property test is provided in:
-
-```text
-tests/test_bdgen_properties.py
-```
+Use the `smoke` command above to check the current BDGen installation. The root-level `tests/test_bdgen_properties.py` targets the historical `bde_frag_gt/` package and is not a test suite for the current six-strategy implementation.
 
 ---
-
 
 # 📄 Citation
 

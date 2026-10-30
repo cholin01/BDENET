@@ -1,0 +1,2 @@
+# Bundle the runtime assets as ordinary Git files; neither exceeds GitHub's file limit.
+assets/** -filter -diff -merge -text
