@@ -1,4 +1,4 @@
-name: bdebnet
+name: bdenet
 channels:
   - https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/main
   - conda-forge
