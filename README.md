@@ -162,7 +162,7 @@ print(bde_values)
 
 # 🧪 BDGen: BDE-Guided Molecular Optimization
 
-The current BDGen implementation is distributed in [`BDGen/`](BDGen/), with a single entry point, `BDGen/run_bdgen.py`, for six optimization strategies:
+BDGen is distributed in [`BDGen/`](BDGen/), with a single entry point, `BDGen/run_bdgen.py`, for six optimization strategies:
 
 * `property-only`, `bde-only`, and `joint` compare optimization objectives.
 * `random`, `static`, and `dynamic` compare editing-region selection under the same joint BDE and property objective.
@@ -183,8 +183,6 @@ python run_bdgen.py all --output results --jobs 2
 ```
 
 See the [BDGen README](BDGen/README.md) for individual strategies, effective search settings, candidate selection, output definitions, and optional post-generation ADMET evaluation. ADMET endpoints do not participate in the six-strategy optimization workflow.
-
-The root-level `run_bde_frag_gt.py`, `run_wetlab_benchmark.py`, and `run_benchmark.sh` are historical scripts for the removed `bde_frag_gt/` package. Use `BDGen/run_bdgen.py` for the current implementation.
 
 ---
 
@@ -217,7 +215,7 @@ The BDE-aware G2Retro module is used for retrosynthesis-related modeling with bo
 
 # ✅ BDGen Functional Check
 
-Use the `smoke` command above to check the current BDGen installation. The root-level `tests/test_bdgen_properties.py` targets the historical `bde_frag_gt/` package and is not a test suite for the current six-strategy implementation.
+Use the `smoke` command above to check candidate generation and Pareto selection after installing the BDGen dependencies.
 
 ---
 
