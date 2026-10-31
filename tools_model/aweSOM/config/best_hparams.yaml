@@ -1,4 +1,4 @@
-epochs: 200
+epochs: 150
 learning_rate: 4.4409443980285365e-05
 num_conv_layers: 5
 pos_class_weight: 2.204301096513404
