@@ -56,7 +56,7 @@ def load_references(path):
 
 
 def command_for(args):
-    command = [sys.executable, str(ROOT / "BDGen" / "run_bdgen.py"), args.strategy,
+    command = [sys.executable, str(ROOT / "BDGen" / "run_bdgen.py"), "--strategy", args.strategy,
                "--output", str(args.output.resolve()), "--profile", args.profile,
                "--jobs", str(args.jobs)]
     for case_id in args.case_ids or []:

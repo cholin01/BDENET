@@ -175,13 +175,13 @@ Follow the separate Linux/Python 3.12 installation instructions in the [BDGen RE
 
 ```bash
 cd BDGen
-python run_bdgen.py all --case MO-008 --profile smoke --output smoke_results --jobs 2
+python run_bdgen.py --strategy all --case MO-008 --profile smoke --output smoke_results --jobs 2
 ```
 
 To run all 15 cases under all six strategies:
 
 ```bash
-python run_bdgen.py all --output results --jobs 2
+python run_bdgen.py --strategy all --output results --jobs 2
 ```
 
 See the [BDGen README](BDGen/README.md) for individual strategies, effective search settings, candidate selection, output definitions, and optional post-generation ADMET evaluation. ADMET endpoints do not participate in the six-strategy optimization workflow.

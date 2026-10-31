@@ -70,7 +70,7 @@ def verify_sources():
 
 def command_for(case,strategy,args,output):
  recipe=RECIPES[strategy];source=HOME/recipe['source'];b=PROFILES[args.profile]
- cmd=[sys.executable,str(source/'worker_entry.py'),'--mode','global','--strategy',recipe['preset'],
+ cmd=[sys.executable,str(source/'worker_entry.py'),'--strategy',recipe['preset'],
       '--seed_smiles',case['initial_smiles'],'--smiles_file',str(HOME/'data/initial_molecules.smi'),
       '--fragstore_path',str(args.fragment_library),'--bde_checkpoint',str(args.checkpoint),
       '--device','cpu','--output_dir',str(output),'--population_size',str(b['population_size']),
@@ -166,7 +166,7 @@ ROUTES={'property-only':run_property_only,'bde-only':run_bde_only,'joint':run_jo
 
 def main():
  p=argparse.ArgumentParser(description=__doc__,formatter_class=argparse.RawDescriptionHelpFormatter)
- p.add_argument('strategy',choices=['all',*RECIPES],help='Run all six strategies or exactly one named strategy')
+ p.add_argument('--strategy',required=True,choices=['all',*RECIPES],help='Run all six strategies or exactly one named strategy')
  p.add_argument('--cases',type=Path,default=HOME/'data/cases.json')
  p.add_argument('--case',action='append',dest='case_ids',help='Frozen source case ID; repeat for several cases')
  p.add_argument('--output',type=Path,default=Path('bdgen_results'))

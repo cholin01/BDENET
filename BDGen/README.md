@@ -70,7 +70,7 @@ Final candidates are selected from the retained population after excluding struc
 Run a short workflow for all six strategies on one case:
 
 ```bash
-python run_bdgen.py all --case MO-008 --profile smoke \
+python run_bdgen.py --strategy all --case MO-008 --profile smoke \
   --output smoke_results --jobs 2
 ```
 
@@ -81,15 +81,15 @@ The `smoke` profile uses a population cap of 8, an offspring target of 8, 3 gene
 Run all 15 cases under all six strategies, producing 90 independent case–strategy jobs:
 
 ```bash
-python run_bdgen.py all --output results --jobs 2
+python run_bdgen.py --strategy all --output results --jobs 2
 ```
 
 Run a single strategy or selected cases:
 
 ```bash
-python run_bdgen.py dynamic --output dynamic_results
+python run_bdgen.py --strategy dynamic --output dynamic_results
 
-python run_bdgen.py random --case MO-006 --case MO-008 \
+python run_bdgen.py --strategy random --case MO-006 --case MO-008 \
   --output selected_random_results --jobs 2
 ```
 
@@ -97,6 +97,7 @@ python run_bdgen.py random --case MO-006 --case MO-008 \
 
 | Option | Purpose |
 |---|---|
+| `--strategy NAME` | Required; select `all`, `property-only`, `bde-only`, `joint`, `random`, `static`, or `dynamic` |
 | `--case ID` | Restrict execution to a case; repeat to select multiple cases |
 | `--cases PATH` | Read a case list containing `case_id` and `initial_smiles` fields |
 | `--output PATH` | Set the output directory |

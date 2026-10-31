@@ -18,8 +18,6 @@ def summarize_bde_and_properties(
     smiles_list: List[str],
     predictor: BDEPredictor | None = None,
     structural_filter_profile: str = "none",
-    local_hot_max_bde: float | None = None,
-    hot_top_k: int = 3,
 ) -> List[Dict[str, Union[str, float, int]]]:
     """Build a compact report for top candidates."""
     predictor = predictor or HeuristicBDEPredictor()
@@ -37,8 +35,6 @@ def summarize_bde_and_properties(
             mol,
             predictor=predictor,
             profile_name=structural_filter_profile,
-            hot_max_bde=local_hot_max_bde,
-            hot_top_k=hot_top_k,
         )
         rows.append(
             {

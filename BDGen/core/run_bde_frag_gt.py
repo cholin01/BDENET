@@ -12,18 +12,14 @@ import torch
 
 from bde_frag_gt.optimizer import (
     BDEOptimizationConfig,
-    BDEPropertyScorer,
     HeuristicBDEPredictor,
-    bde_hot_bonds,
     molecule_properties,
-    weakest_bond_info,
 )
 from bde_frag_gt.evaluate_properties import (
     add_admet_composite_objectives,
     evaluate_smiles,
     summarize_property_rows,
 )
-from bde_frag_gt.refine import summarize_bde_and_properties
 from bde_frag_gt.strategies import StrategyScorer, PRESETS
 from bde_frag_gt.heavy_atoms import SeedHeavyAtomConstraint
 from bde_frag_gt.regions import RegionPolicy, seed_molecule, SEED, TERMINAL, BDE_SCOPE
@@ -196,10 +192,9 @@ def main() -> None:
     parser.add_argument("--bde_checkpoint", type=str, default=None)
     parser.add_argument("--device", type=str, default="cuda")
 
-    parser.add_argument("--mode", type=str, choices=["global", "local"], default="global")
     parser.add_argument("--smiles_file", type=str, required=True)
     parser.add_argument("--seed_smiles", type=str, default=None)
-    parser.add_argument('--strategy',choices=list(PRESETS),default='joint')
+    parser.add_argument('--strategy',choices=list(PRESETS),required=True)
     parser.add_argument(
         "--fragstore_path",
         type=str,
@@ -226,16 +221,13 @@ def main() -> None:
     parser.add_argument("--keep_properties", action="store_true")
     parser.add_argument("--min_similarity", type=float, default=0.55)
     parser.add_argument("--enable_seed_similarity", action="store_true",
-                        help="Enable the existing full-molecule seed-similarity reward, soft penalty and Pareto objective without changing the editing mode.")
+                        help="Enable the full-molecule seed-similarity reward, soft penalty and Pareto objective.")
     parser.add_argument('--min-heavy-atoms-ratio', default=None,
                         help='Optional hard size floor relative to original seed HA; decimal ratio in (0,1]. Disabled when omitted.')
-    parser.add_argument("--hot_top_k", type=int, default=3)
-    parser.add_argument("--hot_max_bde", type=float, default=None)
-
     parser.add_argument(
         "--structural_filter_profile",
-        choices=["none", "druglike_local", "druglike_common"],
-        default="druglike_local",
+        choices=["none", "druglike_common"],
+        default="druglike_common",
     )
 
     parser.add_argument("--logp_min", type=float, default=0.0)
@@ -290,7 +282,6 @@ def main() -> None:
         target_bond_range = (args.target_bond_low, args.target_bond_high)
 
     config = BDEOptimizationConfig(
-        mode=args.mode,
         target_min_bde=args.target_min_bde,
         target_mean_bde=args.target_mean_bde,
         weakest_bde_range=weakest_range,
@@ -299,10 +290,8 @@ def main() -> None:
         target_bond_range=target_bond_range,
         maximize_target_bond=args.maximize_target_bond,
         min_similarity=args.min_similarity,
-        seed_smiles=args.seed_smiles if (args.mode == "local" or args.enable_seed_similarity) else None,
+        seed_smiles=args.seed_smiles if args.enable_seed_similarity else None,
         structural_filter_profile=args.structural_filter_profile,
-        local_hot_max_bde=args.hot_max_bde,
-        hot_top_k=args.hot_top_k,
         logp_range=(args.logp_min, args.logp_max),
         mw_range=(args.mw_min, args.mw_max),
         tpsa_range=(args.tpsa_min, args.tpsa_max),
@@ -317,19 +306,7 @@ def main() -> None:
         print("[BDENET] Using HeuristicBDEPredictor for a lightweight baseline run.")
         predictor = HeuristicBDEPredictor()
 
-    if args.mode == "local":
-        if not args.seed_smiles:
-            raise ValueError("--seed_smiles is required when --mode local")
-
-        if args.keep_properties:
-            base = molecule_properties(args.seed_smiles, predictor=predictor)
-            config.min_qed = max(0.0, base["qed"] - 0.02)
-            config.min_logp = base["logp"] - 0.2
-            config.min_mw = max(0.0, base["mw"] - 10.0)
-            config.max_tpsa = min(args.tpsa_max, base.get("tpsa", args.tpsa_max) + 15.0)
-            config.max_sa = min(args.sa_max, base.get("sa", args.sa_max) + 0.5)
-
-    elif args.keep_properties and args.seed_smiles:
+    if args.keep_properties and args.seed_smiles:
         base = molecule_properties(args.seed_smiles, predictor=predictor)
         config.min_qed = max(0.0, base["qed"] - 0.02)
         config.min_logp = base["logp"] - 0.2
@@ -395,7 +372,7 @@ def main() -> None:
         row=dict(values,smiles=smiles,score=float(item.score))
         if values.get('has_bde',0)<.5:
             row['min_bde']=None;row['mean_bde']=None
-        row.update(structural_filter_report(mol,predictor,args.structural_filter_profile,args.hot_max_bde,args.hot_top_k))
+        row.update(structural_filter_report(mol,predictor,args.structural_filter_profile))
         row['structural_filter_ok']=int(row.pop('ok'))
         row['structural_filter_reason']=row.pop('reason')
         row['static_region_resolved']=bool(region_policy.locate_static(mol)) if scorer.selection=='static_weakest' else None
@@ -529,20 +506,6 @@ def main() -> None:
 
         with open(os.path.join(args.output_dir, "property_evaluation.json"), "w", encoding="utf-8") as handle:
             json.dump(evaluation, handle, indent=2)
-
-    if args.mode == "local":
-        base_weak = weakest_bond_info(args.seed_smiles, predictor=predictor)
-        with open(os.path.join(args.output_dir, "seed_weakest_bond.json"), "w", encoding="utf-8") as handle:
-            json.dump(base_weak, handle, indent=2)
-
-        hot = bde_hot_bonds(
-            args.seed_smiles,
-            predictor=predictor,
-            top_k=args.hot_top_k,
-            max_bde=args.hot_max_bde,
-        )
-        with open(os.path.join(args.output_dir, "seed_bde_hot_bonds.json"), "w", encoding="utf-8") as handle:
-            json.dump(hot, handle, indent=2)
 
     print(f"Generated {len(optimized)} molecules.")
     print(f"Results written to: {args.output_dir}")

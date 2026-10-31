@@ -91,8 +91,6 @@ class HeuristicBDEPredictor:
 
 @dataclass
 class BDEOptimizationConfig:
-    mode: str = "global"
-
     target_min_bde: float = 90.0
     target_mean_bde: float = 105.0
     weakest_bde_range: Optional[Tuple[float, float]] = None
@@ -128,9 +126,7 @@ class BDEOptimizationConfig:
     weight_target_bond: float = 0.20
 
     structural_filter_profile: str = "none"
-    local_hot_max_bde: Optional[float] = None
     weight_structural_filter: float = 0.20
-    hot_top_k: int = 3
 
     # two-stage BDE
     use_two_stage_bde: bool = True
@@ -265,9 +261,6 @@ class BDEPropertyScorer(SmilesScorer):
                 similarity = float(DataStructs.TanimotoSimilarity(self._seed_fp, cand_fp))
 
             structural_filter_score = 1.0
-            if self.config.mode == "local" and self.config.structural_filter_profile != "none":
-                structural_filter_score = 1.0
-
             values = {
                 "qed": float(qed),
                 "logp": float(logp),
